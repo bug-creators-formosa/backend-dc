@@ -1,0 +1,1 @@
+# Basic Nest Template with Auth and User entities.
