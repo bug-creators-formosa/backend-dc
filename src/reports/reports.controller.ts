@@ -30,12 +30,12 @@ export class ReportsController {
   @Role(ROLES.ADMIN)
   @Get()
   findAll(
-    @Query('q') query: string,
-    @Query('state') state: string,
+    @Query('q') query?: string,
+    @Query('state') state?: string,
     @Query('type_id', new ParseUUIDPipe({
       optional: true,
       exceptionFactory: () => new NotFoundException('El ID de tipo debe ser un UUID válido')
-    })) type_id: string
+    })) type_id?: string
   ) {
     if (state && !ALLOWED_REPORT_STATES.includes(state as ReportState)) {
       throw new NotFoundException('Estado de denuncia desconocido');
