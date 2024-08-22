@@ -58,10 +58,17 @@ export class ReportsController {
     return this.reportsService.findAllTypes();
   }
 
+  @Role(ROLES.ADMIN)
+  @Get("/by-week")
+  findCountByWeek() {
+    return this.reportsService.findCountByWeek();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.reportsService.findOne(id);
   }
+
 
   @Patch(':id')
   update(

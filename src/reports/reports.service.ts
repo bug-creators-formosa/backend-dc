@@ -97,6 +97,20 @@ export class ReportsService {
     });
   }
 
+  async findCountByWeek() {
+    const query = this.reportsRepository
+      .createQueryBuilder('report')
+      .select('COUNT(report.report_id)', 'reports')
+      .addSelect('DATE_TRUNC(\'month\', report.created_at)', 'month_date')
+      .addSelect('EXTRACT(YEAR FROM DATE_TRUNC(\'month\', report.created_at))', 'year')
+      .addSelect('EXTRACT(MONTH FROM DATE_TRUNC(\'month\', report.created_at))', 'month')
+      .groupBy('month_date')
+      .orderBy('month_date', 'ASC');
+
+    const result = await query.getRawMany();
+    return result;
+  }
+
   async findAllByAuthor(author: User) {
     return this.reportsRepository.find({
       where: { user: { user_id: author.user_id } },
