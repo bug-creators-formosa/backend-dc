@@ -1,6 +1,8 @@
 import { ROLES } from '@/auth/consts';
 import { Role } from '@/auth/entities/role.entity';
 import { ENVIRONMENT } from '@/config/env';
+import { REPORT_TYPES } from '@/reports/consts/report-types';
+import { ReportType } from '@/reports/entities/report-type.entity';
 import { User } from '@/users/entities/user.entity';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -22,6 +24,7 @@ export class SeederService {
     await this.seedRoles();
     await this.seedDefaultAdmin();
     await this.seedUsers();
+    await this.seedReportTypes();
   }
 
   get saltRounds(): number {
@@ -50,6 +53,11 @@ export class SeederService {
       await userRepository.save(userEntity);
     }
 
+  }
+
+  async seedReportTypes() {
+    const repository = this.entityManager.getRepository(ReportType);
+    await repository.insert(REPORT_TYPES);
   }
 
   async seedDefaultAdmin() {

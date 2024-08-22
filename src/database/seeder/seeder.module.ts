@@ -1,12 +1,12 @@
-import { Logger, Module } from '@nestjs/common';
-import { SeederService } from './seeder.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { getConnectionOptions } from '../config';
-import { ENVIRONMENT } from '@/config/env';
-import configEnv from '@/config/env';
 import { Role } from '@/auth/entities/role.entity';
+import configEnv, { ENVIRONMENT } from '@/config/env';
+import { ReportType } from '@/reports/entities/report-type.entity';
 import { User } from '@/users/entities/user.entity';
+import { Logger, Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { getConnectionOptions } from '../config';
+import { SeederService } from './seeder.service';
 
 @Module({
   imports: [
@@ -23,7 +23,7 @@ import { User } from '@/users/entities/user.entity';
         }
         return {
           ...getConnectionOptions(dbConfig),
-          entities: [Role, User]
+          entities: [Role, User, ReportType]
         };
       },
       inject: [ConfigService],
@@ -32,4 +32,4 @@ import { User } from '@/users/entities/user.entity';
   providers: [Logger, SeederService],
   exports: [],
 })
-export class SeederModule {}
+export class SeederModule { }
