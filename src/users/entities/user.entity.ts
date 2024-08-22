@@ -9,7 +9,13 @@ export class User {
 
     @Expose({ name: 'username', toPlainOnly: true })
     @Column()
-    name: string;
+    username: string;
+
+    @Column()
+    names: string;
+
+    @Column()
+    surnames: string;
 
     @Expose({ name: 'email', toPlainOnly: true })
     @Column()

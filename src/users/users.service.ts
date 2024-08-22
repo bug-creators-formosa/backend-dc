@@ -41,7 +41,7 @@ export class UsersService {
 
   async create(user: CreateUserDto) {
     const found = await this.usersRepository.findOne({
-      where: [{ name: user.name }, { email: user.email }],
+      where: [{ username: user.username }, { email: user.email }],
     });
 
     if (found) {
@@ -80,7 +80,7 @@ export class UsersService {
   }
 
   async findOneByName(name: string): Promise<User | null> {
-    return this.usersRepository.findOne({ where: { name }, relations: ['roles'] });
+    return this.usersRepository.findOne({ where: { username: name }, relations: ['roles'] });
   }
 
   async findOneById(id: string): Promise<User | null> {

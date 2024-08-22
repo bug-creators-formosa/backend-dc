@@ -71,7 +71,9 @@ export class SeederService {
     }
 
     const admin = userRepository.create({
-      name: 'admin',
+      names: "Admin",
+      surnames: "Admin",
+      username: 'admin',
       password: await bcrypt.hash('Password.1', this.saltRounds),
       email: 'admin@example.com',
     });
@@ -88,7 +90,7 @@ export class SeederService {
    */
   async seedRoles(): Promise<void> {
     const roleRepository = this.entityManager.getRepository(Role);
-    
+
     const roles = Object.values(ROLES)
       .map(roleName => {
         return roleRepository.create({ name: roleName });
