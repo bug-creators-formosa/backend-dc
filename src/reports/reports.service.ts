@@ -68,7 +68,7 @@ export class ReportsService {
     }
 
     if (options.state) {
-      query.orWhere(`
+      query.andWhere(`
           report.state = :state 
       `, { state: options.state });
     }
