@@ -40,7 +40,7 @@ export class ReportsService {
       throw new InternalServerErrorException("Error al crear proyecto");
     }
 
-    return { project: created, message: "Denuncia creada con éxito" };
+    return { report: created, message: "Denuncia creada con éxito" };
   }
 
   async findAllTypes() {
@@ -71,7 +71,7 @@ export class ReportsService {
     return found;
   }
 
-  async update(id: string, updateProjectDto: UpdateReportDto) {
+  async update(id: string, updateReportDto: UpdateReportDto) {
     const found = await this.reportsRepository.findOne({
       where: { report_id: id }
     });
@@ -80,10 +80,24 @@ export class ReportsService {
       throw new NotFoundException("Denuncia no encontrada");
     }
 
-    const updated = this.reportsRepository.merge(found, updateProjectDto);
+    if (updateReportDto.report_type_id) {
+      const reportType = await this.reportTypeRepository.findOne({
+        where: { report_type_id: updateReportDto.report_type_id }
+      });
+
+      if (!reportType) {
+        throw new NotFoundException("Tipo de denuncia no encontrada");
+      }
+      found.type = reportType;
+    }
+
+    const updated = this.reportsRepository.merge(found, updateReportDto);
     await this.reportsRepository.save(updated);
 
-    return updated;
+    return {
+      report: updated,
+      message: "Denuncia actualizada con éxito"
+    }
   }
 
   async remove(id: string, user: User) {
