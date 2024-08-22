@@ -3,7 +3,7 @@ import { Role } from '@/auth/decorators/role.decorator';
 import { Role as RoleEntity } from '@/auth/entities/role.entity';
 import { JwtAuthGuard } from '@/auth/guards/auth.guard';
 import { RoleGuard } from '@/auth/guards/role.guard';
-import { ProjectsService } from '@/projects/projects.service';
+import { ReportsService } from '@/reports/reports.service';
 import { Body, Controller, Delete, Get, NotFoundException, Param, ParseUUIDPipe, Patch, Put, Query, Req, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Request } from 'express';
@@ -20,7 +20,7 @@ import { UsersService } from './users.service';
 export class UsersController {
     constructor(
         private readonly usersService: UsersService,
-        private readonly projectService: ProjectsService,
+        private readonly projectService: ReportsService,
         @InjectRepository(RoleEntity) private readonly roleRepository: Repository<RoleEntity>,
     ) { }
 

@@ -3,12 +3,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AuthModule } from './auth/auth.module';
 import configEnv, { ENVIRONMENT } from './config/env';
 import { getConnectionOptions } from './database/config';
 import { SeederModule } from './database/seeder/seeder.module';
-import { AuthModule } from './auth/auth.module';
+import { ReportsModule } from './reports/reports.module';
 import { UsersModule } from './users/users.module';
-import { ProjectsModule } from './projects/projects.module';
 
 @Module({
   imports: [
@@ -28,9 +28,9 @@ import { ProjectsModule } from './projects/projects.module';
     SeederModule,
     AuthModule,
     UsersModule,
-    ProjectsModule
+    ReportsModule
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

@@ -1,10 +1,12 @@
+import { ReportType } from "@/reports/entities/report-type.entity";
 import { User } from "@/users/entities/user.entity";
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { ALLOWED_REPORT_STATES, REPORT_STATES, ReportState } from "../consts/report.states";
 
-@Entity('projects')
-export class Project {
+@Entity('reports')
+export class Report {
     @PrimaryGeneratedColumn('uuid')
-    project_id: string;
+    report_id: string;
 
     @Column()
     title: string;
@@ -12,8 +14,14 @@ export class Project {
     @Column()
     description: string;
 
-    @Column()
-    is_public: boolean;
+    @Column({ nullable: true })
+    image_url?: string;
+
+    @ManyToOne(() => ReportType)
+    type: ReportType;
+
+    @Column({ type: "enum", enum: ALLOWED_REPORT_STATES, default: REPORT_STATES.OPENED })
+    state: ReportState;
 
     @ManyToOne(() => User)
     user: User;

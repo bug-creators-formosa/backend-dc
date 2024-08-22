@@ -1,22 +1,23 @@
+import { Role } from '@/auth/entities/role.entity';
+import { ReportType } from '@/reports/entities/report-type.entity';
+import { Report } from '@/reports/entities/report.entity';
+import { ReportsModule } from '@/reports/reports.module';
+import { ReportsService } from '@/reports/reports.service';
 import { Module } from '@nestjs/common';
-import { UsersService } from './users.service';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Role } from '@/auth/entities/role.entity';
-import { ConfigModule } from '@nestjs/config';
 import { UsersController } from './users.controller';
-import { ProjectsModule } from '@/projects/projects.module';
-import { ProjectsService } from '@/projects/projects.service';
-import { Project } from '@/projects/entities/project.entity';
+import { UsersService } from './users.service';
 
 @Module({
   imports: [
     ConfigModule,
-    TypeOrmModule.forFeature([User, Role, Project]),
-    ProjectsModule,
+    TypeOrmModule.forFeature([User, Role, Report, ReportType]),
+    ReportsModule,
   ],
-  providers: [UsersService, ProjectsService],
+  providers: [UsersService, ReportsService],
   exports: [UsersService],
   controllers: [UsersController]
 })
-export class UsersModule {}
+export class UsersModule { }
