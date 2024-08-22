@@ -1,6 +1,6 @@
 import { ReportType } from "@/reports/entities/report-type.entity";
 import { User } from "@/users/entities/user.entity";
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { ALLOWED_REPORT_STATES, REPORT_STATES, ReportState } from "../consts/report.states";
 
 @Entity('reports')
@@ -18,6 +18,10 @@ export class Report {
     image_url?: string;
 
     @ManyToOne(() => ReportType)
+    @JoinColumn({
+        referencedColumnName: 'report_type_id',
+        name: 'report_type_id'
+    })
     type: ReportType;
 
     @Column({ type: "enum", enum: ALLOWED_REPORT_STATES, default: REPORT_STATES.OPENED })
