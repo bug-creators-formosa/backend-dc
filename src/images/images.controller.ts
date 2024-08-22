@@ -1,20 +1,16 @@
 import {
   Controller,
   Get,
-  Post,
-  Body,
-  Patch,
   Param,
-  Delete,
   NotFoundException,
-  StreamableFile,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { ImagesService } from './images.service';
-import { CreateImageDto } from './dto/create-image.dto';
-import { UpdateImageDto } from './dto/update-image.dto';
 import { Response } from 'express';
+import { JwtAuthGuard } from '@/auth/guards/auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('images')
 export class ImagesController {
   constructor(private readonly imagesService: ImagesService) {}
