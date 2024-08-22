@@ -48,7 +48,10 @@ export class SeederService {
       throw new Error('User role not found');
     }
     for (const user of users) {
-      const userEntity = userRepository.create(user);
+      const userEntity = userRepository.create({
+        ...user,
+        password: await bcrypt.hash(user.password, this.saltRounds),
+      });
       userEntity.roles = [userRole];
       await userRepository.save(userEntity);
     }
