@@ -97,16 +97,39 @@ export class ReportsService {
   }
 
   async closeReport(report_id: string) {
-    const report = await this.reportsRepository.findOne({
-      where: { report_id }
+    return await this.update(report_id, { state: REPORT_STATES.CLOSED });
+  }
+
+  async changeReportToInProgress(report_id: string) {
+    return await this.update(report_id, { state: REPORT_STATES.IN_PROGRESS });
+  }
+
+  async solveReport(report_id: string) {
+    return await this.update(report_id, { state: REPORT_STATES.SOLVED });
+  }
+
+  async openReport(report_id: string) {
+    return await this.update(report_id, { state: REPORT_STATES.OPENED });
+  }
+
+  async updateUserReport(report_id: string, updateReportDto: UpdateReportDto, user: User) {
+    const found = await this.reportsRepository.findOne({
+      where: { report_id, user: { user_id: user.user_id } },
+      relations: ['type']
     });
-    if (!report) {
+
+    if (!found) {
       throw new NotFoundException("Denuncia no encontrada");
     }
-    const merged = this.reportsRepository.merge(report, {
-      state: REPORT_STATES.CLOSED
-    });
-    await this.reportsRepository.save(merged);
+
+    const updated = this.reportsRepository.merge(found, updateReportDto);
+
+    await this.reportsRepository.save(updated);
+
+    return {
+      report: updated,
+      message: "Denuncia actualizada con éxito"
+    }
   }
 
   async findOne(id: string) {
