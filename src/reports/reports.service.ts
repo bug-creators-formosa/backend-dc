@@ -122,6 +122,18 @@ export class ReportsService {
       throw new NotFoundException("Denuncia no encontrada");
     }
 
+    if (updateReportDto.report_type_id) {
+      const reportType = await this.reportTypeRepository.findOne({
+        where: { report_type_id: updateReportDto.report_type_id }
+      });
+
+      if (!reportType) {
+        throw new NotFoundException("Tipo de denuncia no encontrada");
+      }
+
+      found.type = reportType;
+    }
+
     const updated = this.reportsRepository.merge(found, updateReportDto);
 
     await this.reportsRepository.save(updated);
