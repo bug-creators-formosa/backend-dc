@@ -30,6 +30,7 @@ export class ReportsService {
     const created = this.reportsRepository.create({
       title: createReportDto.title,
       description: createReportDto.description,
+      address: createReportDto.address,
       state: REPORT_STATES.OPENED,
       user: author
     });

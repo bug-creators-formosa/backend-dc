@@ -14,6 +14,9 @@ export class Report {
     @Column()
     description: string;
 
+    @Column()
+    address: string;
+
     @Column({ nullable: true })
     image_url?: string;
 
