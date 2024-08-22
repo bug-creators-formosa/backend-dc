@@ -114,7 +114,7 @@ export class ReportsService {
     });
 
     if (!found) {
-      throw new NotFoundException("Denuncia no encontrado");
+      throw new NotFoundException("Denuncia no encontrada");
     }
 
     return found;
