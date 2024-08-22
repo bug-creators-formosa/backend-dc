@@ -97,6 +97,13 @@ export class ReportsService {
     });
   }
 
+  async findAllByAuthor(author: User) {
+    return this.reportsRepository.find({
+      where: { user: { user_id: author.user_id } },
+      relations: ['type']
+    });
+  }
+
   async closeReport(report_id: string) {
     return await this.update(report_id, { state: REPORT_STATES.CLOSED });
   }
