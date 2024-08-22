@@ -9,6 +9,11 @@ import { CreateReportDto } from './dto/create-report.dto';
 import { UpdateReportDto } from './dto/update-report.dto';
 import { ReportsService } from './reports.service';
 
+const uuidPipe = new ParseUUIDPipe({
+  optional: false,
+  exceptionFactory: () => new NotFoundException('El ID de la denuncia no es válido')
+});
+
 @Controller('reports')
 @UseGuards(RoleGuard)
 @UseGuards(JwtAuthGuard)
@@ -61,14 +66,14 @@ export class ReportsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', uuidPipe) id: string) {
     return this.reportsService.findOne(id);
   }
 
 
   @Patch(':id')
   update(
-    @Param('id') id: string,
+    @Param('id', uuidPipe) id: string,
     @Body() updateReportDto: UpdateReportDto,
     @Req() req: Request
   ) {
@@ -82,7 +87,7 @@ export class ReportsController {
   @Role(ROLES.ADMIN)
   @Patch(':id/close')
   async closeReport(
-    @Param('id') report_id: string
+    @Param('id', uuidPipe) report_id: string
   ) {
     return this.reportsService.closeReport(report_id);
   }
@@ -90,7 +95,7 @@ export class ReportsController {
   @Role(ROLES.ADMIN)
   @Patch(':id/in-progress')
   async changeReportToProgress(
-    @Param('id') report_id: string
+    @Param('id', uuidPipe) report_id: string
   ) {
     return this.reportsService.changeReportToInProgress(report_id);
   }
@@ -98,7 +103,7 @@ export class ReportsController {
   @Role(ROLES.ADMIN)
   @Patch(':id/solve')
   async solveReport(
-    @Param('id') report_id: string
+    @Param('id', uuidPipe) report_id: string
   ) {
     return this.reportsService.solveReport(report_id);
   }
@@ -106,14 +111,14 @@ export class ReportsController {
   @Role(ROLES.ADMIN)
   @Patch(':id/open')
   async openReport(
-    @Param('id') report_id: string
+    @Param('id', uuidPipe) report_id: string
   ) {
     return this.reportsService.openReport(report_id);
   }
 
   @Delete(':id')
   remove(
-    @Param('id') id: string,
+    @Param('id', uuidPipe) id: string,
     @Req() req: Request
   ) {
     const user = req.user;
