@@ -1,26 +1,26 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  UseGuards,
-} from '@nestjs/common';
-import { ReportTypesService } from './report-types.service';
-import { CreateReportTypeDto } from './dto/create-report-type.dto';
-import { UpdateReportTypeDto } from './dto/update-report-type.dto';
+import { ROLES } from '@/auth/consts';
+import { Role } from '@/auth/decorators/role.decorator';
 import { JwtAuthGuard } from '@/auth/guards/auth.guard';
 import { RoleGuard } from '@/auth/guards/role.guard';
-import { Role } from '@/auth/decorators/role.decorator';
-import { ROLES } from '@/auth/consts';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
+import { CreateReportTypeDto } from './dto/create-report-type.dto';
+import { UpdateReportTypeDto } from './dto/update-report-type.dto';
+import { ReportTypesService } from './report-types.service';
 
 @Controller('report-types')
 @UseGuards(RoleGuard)
 @UseGuards(JwtAuthGuard)
 export class ReportTypesController {
-  constructor(private readonly reportTypesService: ReportTypesService) {}
+  constructor(private readonly reportTypesService: ReportTypesService) { }
 
   @Role(ROLES.ADMIN)
   @Post()
@@ -31,6 +31,12 @@ export class ReportTypesController {
   @Get()
   findAll() {
     return this.reportTypesService.findAll();
+  }
+
+  @Role(ROLES.ADMIN)
+  @Get("/most-reported")
+  findMostReportedTypes() {
+    return this.reportTypesService.findMostReportedTypes();
   }
 
   @Role(ROLES.ADMIN)
