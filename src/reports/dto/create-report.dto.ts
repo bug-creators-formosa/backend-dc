@@ -1,4 +1,5 @@
-import { IsNotEmpty, IsString, IsUUID } from "class-validator";
+import { Image } from "@/images/entities/image.entity";
+import { IsNotEmpty, IsOptional, IsString, IsUUID } from "class-validator";
 
 export class CreateReportDto {
     @IsString({ message: "El título debe ser un string" })
@@ -12,4 +13,5 @@ export class CreateReportDto {
     @IsNotEmpty({ message: "El ID del tipo es requerida" })
     @IsUUID("all", { message: "El ID del tipo debe ser un UUID" })
     report_type_id: string;
+
 }

@@ -9,6 +9,7 @@ import { getConnectionOptions } from './database/config';
 import { SeederModule } from './database/seeder/seeder.module';
 import { ReportsModule } from './reports/reports.module';
 import { UsersModule } from './users/users.module';
+import { ImagesModule } from './images/images.module';
 
 @Module({
   imports: [
@@ -28,7 +29,8 @@ import { UsersModule } from './users/users.module';
     SeederModule,
     AuthModule,
     UsersModule,
-    ReportsModule
+    ReportsModule,
+    ImagesModule
   ],
   controllers: [AppController],
   providers: [AppService],
