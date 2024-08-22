@@ -15,12 +15,12 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 
 @Controller('/users')
-@UseGuards(JwtAuthGuard)
 @UseGuards(RoleGuard)
+@UseGuards(JwtAuthGuard)
 export class UsersController {
     constructor(
         private readonly usersService: UsersService,
-        private readonly projectService: ReportsService,
+        private readonly reportService: ReportsService,
         @InjectRepository(RoleEntity) private readonly roleRepository: Repository<RoleEntity>,
     ) { }
 
@@ -36,6 +36,17 @@ export class UsersController {
             },
             orderBy: query.order_by
         });
+    }
+
+    @Get("/my-reports")
+    async findMyReports(
+        @Req() req: Request
+    ) {
+        const user = req.user;
+        if (!user) {
+            throw new UnauthorizedException("Usuario no autenticado");
+        }
+        return this.reportService.findByAuthor(user);
     }
 
     @Role(ROLES.ADMIN)
@@ -105,14 +116,4 @@ export class UsersController {
     }
 
 
-    @Get("/projects")
-    async findProjects(
-        @Req() req: Request
-    ) {
-        const user = req.user;
-        if (!user) {
-            throw new UnauthorizedException("Usuario no autenticado");
-        }
-        return this.projectService.findByAuthor(user);
-    }
 }

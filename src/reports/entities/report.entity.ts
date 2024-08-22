@@ -1,22 +1,22 @@
+import { Image } from '@/images/entities/image.entity';
 import { ReportType } from '@/reports/report-types/entities/report-type.entity';
 import { User } from '@/users/entities/user.entity';
+import { Exclude, Expose } from 'class-transformer';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
-  VirtualColumn,
+  UpdateDateColumn
 } from 'typeorm';
 import {
   ALLOWED_REPORT_STATES,
   REPORT_STATES,
   ReportState,
 } from '../consts/report.states';
-import { Image } from '@/images/entities/image.entity';
-import { Exclude, Expose } from 'class-transformer';
 
 @Entity('reports')
 export class Report {
@@ -29,19 +29,24 @@ export class Report {
   @Column()
   description: string;
 
+  @Column()
+  address: string;
+
+  @ManyToOne(() => ReportType)
+  @JoinColumn({
+    referencedColumnName: 'report_type_id',
+    name: 'report_type_id'
+  })
+  type: ReportType;
   @Exclude({ toPlainOnly: true })
   @ManyToOne(() => Image, { nullable: true })
   image?: Image;
 
   @Expose({ name: 'image_url' })
   imageUrl() {
-    return  '/images/' + this.image?.image_id;
+    return '/images/' + this.image?.image_id;
   }
 
-  @ManyToOne(() => ReportType)
-  type: ReportType;
-
- 
   @Column({
     type: 'enum',
     enum: ALLOWED_REPORT_STATES,
@@ -51,6 +56,9 @@ export class Report {
 
   @ManyToOne(() => User)
   user: User;
+
+  @Column({ nullable: true, type: "date", default: "NOW()" })
+  state_change_at: Date;
 
   @CreateDateColumn()
   created_at: Date;

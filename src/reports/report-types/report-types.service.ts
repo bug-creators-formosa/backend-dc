@@ -4,10 +4,10 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateReportTypeDto } from './dto/create-report-type.dto';
-import { UpdateReportTypeDto } from './dto/update-report-type.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { CreateReportTypeDto } from './dto/create-report-type.dto';
+import { UpdateReportTypeDto } from './dto/update-report-type.dto';
 import { ReportType } from './entities/report-type.entity';
 
 @Injectable()
@@ -15,7 +15,7 @@ export class ReportTypesService {
   constructor(
     @InjectRepository(ReportType)
     private reportTypeRepository: Repository<ReportType>,
-  ) {}
+  ) { }
 
   async create(createReportTypeDto: CreateReportTypeDto) {
     const foundedType = await this.reportTypeRepository.findOne({
@@ -87,7 +87,7 @@ export class ReportTypesService {
       where: { report_type_id: id },
       relations: ['reports'],
     });
-    
+
 
     if (!reportType) {
       throw new NotFoundException('Tipo de denuncia no encontrada');
@@ -106,5 +106,43 @@ export class ReportTypesService {
       reportType,
       message: 'Tipo de denuncia eliminado con éxito',
     };
+  }
+
+  async findMostReportedTypes() {
+    const query = this.reportTypeRepository
+      .createQueryBuilder('type')
+      .leftJoin('type.reports', 'report')
+      .select('COUNT(report.report_id)', 'reports')
+      .addSelect('type.name', 'type_name')
+      .groupBy('type_name')
+      .limit(5)
+      .orderBy('reports', 'DESC');
+
+    const result = await query.getRawMany();
+    return result;
+  }
+
+  async findReportTypeByState() {
+    const query = this.reportTypeRepository
+      .createQueryBuilder('type')
+      .leftJoinAndSelect('type.reports', 'report')
+      .select('type.name', 'type_name')
+      .addSelect('COUNT(report.report_id)', 'reports')
+      .addSelect('report.state', 'state')
+      .groupBy('type_name')
+      .addGroupBy('state')
+      .limit(5)
+      .orderBy('reports', 'DESC');
+
+    const result = await query.getRawMany();
+    const grouped = result.reduce((acc, curr) => {
+      if (!curr.state) return acc;
+      acc[curr.type_name] = {
+        ...acc[curr.type_name],
+        [curr.state]: +curr.reports,
+      };
+      return acc;
+    }, {});
+    return grouped;
   }
 }
