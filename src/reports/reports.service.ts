@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { REPORT_STATES, ReportState } from './consts/report.states';
 import { CreateReportDto } from './dto/create-report.dto';
 import { UpdateReportDto } from './dto/update-report.dto';
-import { ReportType } from './entities/report-type.entity';
+import { ReportType } from './report-types/entities/report-type.entity';
 import { Report } from './entities/report.entity';
 
 @Injectable()
@@ -37,14 +37,10 @@ export class ReportsService {
     await this.reportsRepository.save(created);
 
     if (!created) {
-      throw new InternalServerErrorException("Error al crear proyecto");
+      throw new InternalServerErrorException("Error al crear el reporte");
     }
 
     return { report: created, message: "Denuncia creada con éxito" };
-  }
-
-  async findAllTypes() {
-    return this.reportTypeRepository.find();
   }
 
   async findByAuthor(author: User) {

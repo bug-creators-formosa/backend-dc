@@ -1,5 +1,5 @@
 import { Role } from '@/auth/entities/role.entity';
-import { ReportType } from '@/reports/entities/report-type.entity';
+import { ReportType } from '@/reports/report-types/entities/report-type.entity';
 import { Report } from '@/reports/entities/report.entity';
 import { ReportsModule } from '@/reports/reports.module';
 import { ReportsService } from '@/reports/reports.service';

@@ -1,4 +1,4 @@
-import { ReportType } from "@/reports/entities/report-type.entity";
+import { ReportType } from "@/reports/report-types/entities/report-type.entity";
 import { User } from "@/users/entities/user.entity";
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { ALLOWED_REPORT_STATES, REPORT_STATES, ReportState } from "../consts/report.states";

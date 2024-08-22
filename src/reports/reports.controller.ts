@@ -48,10 +48,6 @@ export class ReportsController {
     return this.reportsService.findAllOpened();
   }
 
-  @Get("/types")
-  findAllTypes() {
-    return this.reportsService.findAllTypes();
-  }
 
   @Get(':id')
   findOne(@Param('id') id: string) {

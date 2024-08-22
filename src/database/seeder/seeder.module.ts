@@ -1,6 +1,6 @@
 import { Role } from '@/auth/entities/role.entity';
 import configEnv, { ENVIRONMENT } from '@/config/env';
-import { ReportType } from '@/reports/entities/report-type.entity';
+import { ReportType } from '@/reports/report-types/entities/report-type.entity';
 import { User } from '@/users/entities/user.entity';
 import { Logger, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
