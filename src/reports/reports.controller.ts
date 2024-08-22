@@ -53,10 +53,6 @@ export class ReportsController {
     return this.reportsService.findAllOpened();
   }
 
-  @Get("/types")
-  findAllTypes() {
-    return this.reportsService.findAllTypes();
-  }
 
   @Role(ROLES.ADMIN)
   @Get("/by-week")

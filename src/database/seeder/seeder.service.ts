@@ -2,7 +2,7 @@ import { ROLES } from '@/auth/consts';
 import { Role } from '@/auth/entities/role.entity';
 import { ENVIRONMENT } from '@/config/env';
 import { REPORT_TYPES } from '@/reports/consts/report-types';
-import { ReportType } from '@/reports/entities/report-type.entity';
+import { ReportType } from '@/reports/report-types/entities/report-type.entity';
 import { User } from '@/users/entities/user.entity';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
