@@ -1,5 +1,11 @@
+import { Image } from '@/images/entities/image.entity';
 import { User } from '@/users/entities/user.entity';
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { REPORT_STATES, ReportState } from './consts/report.states';
@@ -12,19 +18,21 @@ import { ReportType } from './report-types/entities/report-type.entity';
 export class ReportsService {
   constructor(
     @InjectRepository(Report) private reportsRepository: Repository<Report>,
-    @InjectRepository(ReportType) private reportTypeRepository: Repository<ReportType>
+    @InjectRepository(ReportType)
+    private reportTypeRepository: Repository<ReportType>,
   ) { }
 
   async create(
     createReportDto: CreateReportDto,
     author: User,
+    image: Image | undefined,
   ) {
     const reportType = await this.reportTypeRepository.findOne({
       where: { report_type_id: createReportDto.report_type_id }
     });
 
     if (!reportType) {
-      throw new NotFoundException("Tipo de denuncia no encontrada");
+      throw new NotFoundException('Tipo de denuncia no encontrada');
     }
 
     const created = this.reportsRepository.create({
@@ -32,7 +40,8 @@ export class ReportsService {
       description: createReportDto.description,
       address: createReportDto.address,
       state: REPORT_STATES.OPENED,
-      user: author
+      image: image,
+      user: author,
     });
 
     created.type = reportType;
@@ -40,7 +49,7 @@ export class ReportsService {
     await this.reportsRepository.save(created);
 
     if (!created) {
-      throw new InternalServerErrorException("Error al crear el reporte");
+      throw new InternalServerErrorException('Error al crear el reporte');
     }
 
 
@@ -49,9 +58,9 @@ export class ReportsService {
 
   async findByAuthor(author: User) {
     const found = await this.reportsRepository.find({
-      where: { user: { user_id: author.user_id } }
+      where: { user: { user_id: author.user_id } },
     });
-    return found
+    return found;
   }
 
   async findAll(options: {
@@ -70,9 +79,12 @@ export class ReportsService {
     }
 
     if (options.state) {
-      query.andWhere(`
+      query.andWhere(
+        `
           report.state = :state 
-      `, { state: options.state });
+      `,
+        { state: options.state },
+      );
     }
 
     if (options.type_id) {
@@ -88,8 +100,8 @@ export class ReportsService {
   async findAllOpened() {
     return this.reportsRepository.find({
       where: {
-        type: { name: REPORT_STATES.OPENED }
-      }
+        type: { name: REPORT_STATES.OPENED },
+      },
     });
   }
 
@@ -186,13 +198,21 @@ export class ReportsService {
     }
   }
 
-  async findOne(id: string) {
-    const found = await this.reportsRepository.findOneBy({
-      report_id: id,
+  async findOne(id: string, user: User) {
+    const found = await this.reportsRepository.findOne({
+      where: { report_id: id },
+      relations: ['user', 'image']
+
     });
 
     if (!found) {
-      throw new NotFoundException("Denuncia no encontrada");
+      throw new NotFoundException('Denuncia no encontrado');
+    }
+
+    if (found.user.user_id != user.user_id) {
+      throw new UnauthorizedException(
+        'No estás autorizado a realizar esta acción.',
+      );
     }
 
     return found;
@@ -200,20 +220,20 @@ export class ReportsService {
 
   async update(id: string, updateReportDto: UpdateReportDto, state_change_at?: Date) {
     const found = await this.reportsRepository.findOne({
-      where: { report_id: id }
+      where: { report_id: id },
     });
 
     if (!found) {
-      throw new NotFoundException("Denuncia no encontrada");
+      throw new NotFoundException('Denuncia no encontrada');
     }
 
     if (updateReportDto.report_type_id) {
       const reportType = await this.reportTypeRepository.findOne({
-        where: { report_type_id: updateReportDto.report_type_id }
+        where: { report_type_id: updateReportDto.report_type_id },
       });
 
       if (!reportType) {
-        throw new NotFoundException("Tipo de denuncia no encontrada");
+        throw new NotFoundException('Tipo de denuncia no encontrada');
       }
       found.type = reportType;
     }
@@ -238,10 +258,13 @@ export class ReportsService {
   }
 
   async remove(id: string, user: User) {
-    const result = await this.reportsRepository.softDelete({ report_id: id, user: { user_id: user.user_id } });
+    const result = await this.reportsRepository.softDelete({
+      report_id: id,
+      user: { user_id: user.user_id },
+    });
 
     if (result.affected === 0) {
-      throw new NotFoundException("Denuncia no encontrada");
+      throw new NotFoundException('Denuncia no encontrada');
     }
 
     return true;
