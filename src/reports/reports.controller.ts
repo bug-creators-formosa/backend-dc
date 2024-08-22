@@ -2,7 +2,7 @@ import { ROLES } from '@/auth/consts';
 import { Role } from '@/auth/decorators/role.decorator';
 import { JwtAuthGuard } from '@/auth/guards/auth.guard';
 import { RoleGuard } from '@/auth/guards/role.guard';
-import { Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post, Query, Req, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, ParseUUIDPipe, Patch, Post, Query, Req, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { Request } from 'express';
 import { ALLOWED_REPORT_STATES, ReportState } from './consts/report.states';
 import { CreateReportDto } from './dto/create-report.dto';
@@ -31,14 +31,19 @@ export class ReportsController {
   @Get()
   findAll(
     @Query('q') query: string,
-    @Query('state') state: string
+    @Query('state') state: string,
+    @Query('type_id', new ParseUUIDPipe({
+      optional: true,
+      exceptionFactory: () => new NotFoundException('El ID de tipo debe ser un UUID válido')
+    })) type_id: string
   ) {
     if (state && !ALLOWED_REPORT_STATES.includes(state as ReportState)) {
       throw new NotFoundException('Estado de denuncia desconocido');
     }
     return this.reportsService.findAll({
       query,
-      state: state as ReportState
+      state: state as ReportState,
+      type_id
     });
   }
 
