@@ -2,8 +2,9 @@ import { ROLES } from '@/auth/consts';
 import { Role } from '@/auth/decorators/role.decorator';
 import { JwtAuthGuard } from '@/auth/guards/auth.guard';
 import { RoleGuard } from '@/auth/guards/role.guard';
-import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post, Query, Req, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { Request } from 'express';
+import { ALLOWED_REPORT_STATES, ReportState } from './consts/report.states';
 import { CreateReportDto } from './dto/create-report.dto';
 import { UpdateReportDto } from './dto/update-report.dto';
 import { ReportsService } from './reports.service';
@@ -28,8 +29,23 @@ export class ReportsController {
 
   @Role(ROLES.ADMIN)
   @Get()
-  findAll() {
-    return this.reportsService.findAll();
+  findAll(
+    @Query('q') query: string,
+    @Query('state') state: string
+  ) {
+    if (state && !ALLOWED_REPORT_STATES.includes(state as ReportState)) {
+      throw new NotFoundException('Estado de denuncia desconocido');
+    }
+    return this.reportsService.findAll({
+      query,
+      state: state as ReportState
+    });
+  }
+
+  @Role(ROLES.ADMIN)
+  @Get('/opened')
+  findAllOpened() {
+    return this.reportsService.findAllOpened();
   }
 
   @Get("/types")
@@ -53,6 +69,14 @@ export class ReportsController {
       throw new UnauthorizedException("Usuario no autenticado");
     }
     return this.reportsService.update(id, updateReportDto);
+  }
+
+  @Role(ROLES.ADMIN)
+  @Patch(':id/close')
+  async closeReport(
+    @Param('id') report_id: string
+  ) {
+    return this.reportsService.closeReport(report_id);
   }
 
   @Delete(':id')

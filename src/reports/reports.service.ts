@@ -2,7 +2,7 @@ import { User } from '@/users/entities/user.entity';
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { REPORT_STATES } from './consts/report.states';
+import { REPORT_STATES, ReportState } from './consts/report.states';
 import { CreateReportDto } from './dto/create-report.dto';
 import { UpdateReportDto } from './dto/update-report.dto';
 import { ReportType } from './entities/report-type.entity';
@@ -54,9 +54,48 @@ export class ReportsService {
     return found
   }
 
-  async findAll() {
-    const found = await this.reportsRepository.find();
+  async findAll(options: {
+    state?: ReportState,
+    query?: string
+  }) {
+    const query = this.reportsRepository.createQueryBuilder('report');
+
+    if (options.query) {
+      query.where(`
+          report.title ILIKE :query OR
+          report.description ILIKE :query
+      `, { query: `%${options.query}%` });
+    }
+
+    if (options.state) {
+      query.orWhere(`
+          report.state = :state 
+      `, { state: options.state });
+    }
+
+    const found = await query.getMany();
     return found;
+  }
+
+  async findAllOpened() {
+    return this.reportsRepository.find({
+      where: {
+        type: { name: REPORT_STATES.OPENED }
+      }
+    });
+  }
+
+  async closeReport(report_id: string) {
+    const report = await this.reportsRepository.findOne({
+      where: { report_id }
+    });
+    if (!report) {
+      throw new NotFoundException("Denuncia no encontrada");
+    }
+    const merged = this.reportsRepository.merge(report, {
+      state: REPORT_STATES.CLOSED
+    });
+    await this.reportsRepository.save(merged);
   }
 
   async findOne(id: string) {
