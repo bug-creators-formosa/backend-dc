@@ -19,7 +19,7 @@ export class ReportsService {
     createReportDto: CreateReportDto,
     author: User,
   ) {
-    const reportType = await this.reportTypeRepository.find({
+    const reportType = await this.reportTypeRepository.findOne({
       where: { report_type_id: createReportDto.report_type_id }
     });
 
@@ -33,6 +33,8 @@ export class ReportsService {
       state: REPORT_STATES.OPENED,
       user: author
     });
+
+    created.type = reportType;
 
     await this.reportsRepository.save(created);
 
@@ -56,21 +58,29 @@ export class ReportsService {
 
   async findAll(options: {
     state?: ReportState,
-    query?: string
+    query?: string,
+    type_id?: string
   }) {
-    const query = this.reportsRepository.createQueryBuilder('report');
+    const query = this.reportsRepository.createQueryBuilder('report')
+      .leftJoinAndSelect('report.type', 'type');
 
     if (options.query) {
-      query.where(`
+      query.where(`(
           report.title ILIKE :query OR
           report.description ILIKE :query
-      `, { query: `%${options.query}%` });
+      )`, { query: `%${options.query}%` });
     }
 
     if (options.state) {
       query.andWhere(`
           report.state = :state 
       `, { state: options.state });
+    }
+
+    if (options.type_id) {
+      query.andWhere(`
+          report.report_type_id = :type_id
+      `, { type_id: options.type_id });
     }
 
     const found = await query.getMany();
