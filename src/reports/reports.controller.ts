@@ -58,11 +58,10 @@ export class ReportsController {
     return this.reportsService.findAllOpened();
   }
 
-
   @Role(ROLES.ADMIN)
-  @Get("/by-week")
-  findCountByWeek() {
-    return this.reportsService.findCountByWeek();
+  @Get("/by-month")
+  findByMonth() {
+    return this.reportsService.findCountByMonth();
   }
 
   @Get(':id')

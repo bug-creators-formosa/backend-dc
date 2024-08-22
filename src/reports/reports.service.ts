@@ -5,8 +5,8 @@ import { Repository } from 'typeorm';
 import { REPORT_STATES, ReportState } from './consts/report.states';
 import { CreateReportDto } from './dto/create-report.dto';
 import { UpdateReportDto } from './dto/update-report.dto';
-import { ReportType } from './report-types/entities/report-type.entity';
 import { Report } from './entities/report.entity';
+import { ReportType } from './report-types/entities/report-type.entity';
 
 @Injectable()
 export class ReportsService {
@@ -93,7 +93,7 @@ export class ReportsService {
     });
   }
 
-  async findCountByWeek() {
+  async findCountByMonth() {
     const query = this.reportsRepository
       .createQueryBuilder('report')
       .select('COUNT(report.report_id)', 'reports')
@@ -106,6 +106,7 @@ export class ReportsService {
     const result = await query.getRawMany();
     return result;
   }
+
 
   async findAllByAuthor(author: User) {
     return this.reportsRepository.find({
