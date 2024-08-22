@@ -107,6 +107,29 @@ export class ReportsService {
     return result;
   }
 
+  async findStateCountByMonth() {
+    const query = this.reportsRepository
+      .createQueryBuilder('report')
+      .select('COUNT(report.report_id)', 'reports')
+      .addSelect('DATE_TRUNC(\'month\', report.state_change_at)', 'month_date')
+      .addSelect('EXTRACT(YEAR FROM DATE_TRUNC(\'month\', report.state_change_at))', 'year')
+      .addSelect('EXTRACT(MONTH FROM DATE_TRUNC(\'month\', report.state_change_at))', 'month')
+      .addSelect('report.state', 'state')
+      .groupBy('month_date')
+      .addGroupBy('state')
+      .limit(12)
+      .orderBy('month_date', 'ASC');
+
+    const rawResult = await query.getRawMany();
+    const result = rawResult.reduce((acc, item) => {
+      acc[item.month + "-" + item.year] = {
+        ...acc[item.month + "-" + item.year],
+        [item.state]: +item.reports
+      }
+      return acc;
+    }, {});
+    return result;
+  }
 
   async findAllByAuthor(author: User) {
     return this.reportsRepository.find({
@@ -116,19 +139,19 @@ export class ReportsService {
   }
 
   async closeReport(report_id: string) {
-    return await this.update(report_id, { state: REPORT_STATES.CLOSED });
+    return await this.update(report_id, { state: REPORT_STATES.CLOSED }, new Date());
   }
 
   async changeReportToInProgress(report_id: string) {
-    return await this.update(report_id, { state: REPORT_STATES.IN_PROGRESS });
+    return await this.update(report_id, { state: REPORT_STATES.IN_PROGRESS }, new Date());
   }
 
   async solveReport(report_id: string) {
-    return await this.update(report_id, { state: REPORT_STATES.SOLVED });
+    return await this.update(report_id, { state: REPORT_STATES.SOLVED }, new Date());
   }
 
   async openReport(report_id: string) {
-    return await this.update(report_id, { state: REPORT_STATES.OPENED });
+    return await this.update(report_id, { state: REPORT_STATES.OPENED }, new Date());
   }
 
   async updateUserReport(report_id: string, updateReportDto: UpdateReportDto, user: User) {
@@ -175,7 +198,7 @@ export class ReportsService {
     return found;
   }
 
-  async update(id: string, updateReportDto: UpdateReportDto) {
+  async update(id: string, updateReportDto: UpdateReportDto, state_change_at?: Date) {
     const found = await this.reportsRepository.findOne({
       where: { report_id: id }
     });
@@ -196,6 +219,10 @@ export class ReportsService {
     }
 
     const updated = this.reportsRepository.merge(found, updateReportDto);
+
+    if (state_change_at) {
+      updated.state_change_at = state_change_at;
+    }
 
     await this.reportsRepository.save(updated);
 

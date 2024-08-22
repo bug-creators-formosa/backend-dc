@@ -64,11 +64,16 @@ export class ReportsController {
     return this.reportsService.findCountByMonth();
   }
 
+  @Role(ROLES.ADMIN)
+  @Get('/by-state-and-month')
+  findByStateAndMonth() {
+    return this.reportsService.findStateCountByMonth()
+  }
+
   @Get(':id')
   findOne(@Param('id', uuidPipe) id: string) {
     return this.reportsService.findOne(id);
   }
-
 
   @Patch(':id')
   update(

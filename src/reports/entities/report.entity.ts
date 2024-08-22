@@ -33,6 +33,9 @@ export class Report {
     @ManyToOne(() => User)
     user: User;
 
+    @Column({ nullable: true, type: "date", default: "NOW()" })
+    state_change_at: Date;
+
     @CreateDateColumn()
     created_at: Date;
 
