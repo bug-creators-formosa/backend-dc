@@ -10,8 +10,8 @@ import { UpdateReportDto } from './dto/update-report.dto';
 import { ReportsService } from './reports.service';
 
 @Controller('reports')
-@UseGuards(JwtAuthGuard)
 @UseGuards(RoleGuard)
+@UseGuards(JwtAuthGuard)
 export class ReportsController {
   constructor(private readonly reportsService: ReportsService) { }
 
@@ -73,7 +73,7 @@ export class ReportsController {
     if (!user) {
       throw new UnauthorizedException("Usuario no autenticado");
     }
-    return this.reportsService.update(id, updateReportDto);
+    return this.reportsService.updateUserReport(id, updateReportDto, user);
   }
 
   @Role(ROLES.ADMIN)
@@ -82,6 +82,30 @@ export class ReportsController {
     @Param('id') report_id: string
   ) {
     return this.reportsService.closeReport(report_id);
+  }
+
+  @Role(ROLES.ADMIN)
+  @Patch(':id/in-progress')
+  async changeReportToProgress(
+    @Param('id') report_id: string
+  ) {
+    return this.reportsService.changeReportToInProgress(report_id);
+  }
+
+  @Role(ROLES.ADMIN)
+  @Patch(':id/solve')
+  async solveReport(
+    @Param('id') report_id: string
+  ) {
+    return this.reportsService.solveReport(report_id);
+  }
+
+  @Role(ROLES.ADMIN)
+  @Patch(':id/open')
+  async openReport(
+    @Param('id') report_id: string
+  ) {
+    return this.reportsService.openReport(report_id);
   }
 
   @Delete(':id')
