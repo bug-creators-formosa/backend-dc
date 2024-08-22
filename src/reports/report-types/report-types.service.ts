@@ -121,4 +121,28 @@ export class ReportTypesService {
     const result = await query.getRawMany();
     return result;
   }
+
+  async findReportTypeByState() {
+    const query = this.reportTypeRepository
+      .createQueryBuilder('type')
+      .leftJoinAndSelect('type.reports', 'report')
+      .select('type.name', 'type_name')
+      .addSelect('COUNT(report.report_id)', 'reports')
+      .addSelect('report.state', 'state')
+      .groupBy('type_name')
+      .addGroupBy('state')
+      .limit(5)
+      .orderBy('reports', 'DESC');
+
+    const result = await query.getRawMany();
+    const grouped = result.reduce((acc, curr) => {
+      if (!curr.state) return acc;
+      acc[curr.type_name] = {
+        ...acc[curr.type_name],
+        [curr.state]: +curr.reports,
+      };
+      return acc;
+    }, {});
+    return grouped;
+  }
 }

@@ -40,6 +40,12 @@ export class ReportTypesController {
   }
 
   @Role(ROLES.ADMIN)
+  @Get('/by-state')
+  findTypesByState() {
+    return this.reportTypesService.findReportTypeByState();
+  }
+
+  @Role(ROLES.ADMIN)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.reportTypesService.findOne(id);
