@@ -42,6 +42,7 @@ export class ReportsService {
       throw new InternalServerErrorException("Error al crear proyecto");
     }
 
+
     return { report: created, message: "Denuncia creada con éxito" };
   }
 
@@ -141,10 +142,16 @@ export class ReportsService {
     }
 
     const updated = this.reportsRepository.merge(found, updateReportDto);
+
     await this.reportsRepository.save(updated);
 
+    const withType = await this.reportsRepository.findOne({
+      where: { report_id: updated.report_id },
+      relations: ['type']
+    });
+
     return {
-      report: updated,
+      report: withType,
       message: "Denuncia actualizada con éxito"
     }
   }
