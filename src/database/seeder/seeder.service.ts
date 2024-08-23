@@ -2,6 +2,7 @@ import { ROLES } from '@/auth/consts';
 import { Role } from '@/auth/entities/role.entity';
 import { ENVIRONMENT } from '@/config/env';
 import { REPORT_TYPES } from '@/reports/consts/report-types';
+import { REPORT_STATES } from '@/reports/consts/report.states';
 import { Report } from '@/reports/entities/report.entity';
 import { ReportType } from '@/reports/report-types/entities/report-type.entity';
 import { User } from '@/users/entities/user.entity';
@@ -22,10 +23,10 @@ export class SeederService {
    * Apply all seeding operations
    */
   async seed() {
-    // await this.seedRoles();
-    // await this.seedDefaultAdmin();
-    // await this.seedUsers();
-    // await this.seedReportTypes();
+    await this.seedRoles();
+    await this.seedDefaultAdmin();
+    await this.seedUsers();
+    await this.seedReportTypes();
     await this.seedReports();
   }
 
@@ -149,24 +150,32 @@ export class SeederService {
 
     const users = await userRepository.find();
 
-    for (const user of users) {
+    const randomState = Object.values(REPORT_STATES);
 
+    for (const user of users) {
       const RANDOM_NUMBER_OF_REPORTS = Math.floor(Math.random() * 3) + 1;
 
-      const reports = Array.from({ length: RANDOM_NUMBER_OF_REPORTS }).map(() => {
-        const reportType =
-          reportTypes[Math.floor(Math.random() * reportTypes.length)];
-        const randomReport =
-          mockReports[Math.floor(Math.random() * mockReports.length)];
+      const reports = Array.from({ length: RANDOM_NUMBER_OF_REPORTS }).map(
+        () => {
+          const reportType =
+            reportTypes[Math.floor(Math.random() * reportTypes.length)];
+          const randomReport =
+            mockReports[Math.floor(Math.random() * mockReports.length)];
 
-        return reportRepository.create({
-          title: randomReport.title,
-          description: randomReport.description,
-          address: randomReport.address,
-          type: reportType,
-          user,
-        });
-      });
+          const countStates =
+            Math.floor(Math.random() * randomState.length) + 1;
+
+          return reportRepository.create({
+            title: randomReport.title,
+            description: randomReport.description,
+            address: randomReport.address,
+            type: reportType,
+            user,
+            created_at: randomReport.created_at,
+            state: randomState[countStates],
+          });
+        },
+      );
 
       await reportRepository.save(reports);
     }
