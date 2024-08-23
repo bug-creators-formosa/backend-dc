@@ -59,6 +59,7 @@ export class ReportsService {
   async findByAuthor(author: User) {
     const found = await this.reportsRepository.find({
       where: { user: { user_id: author.user_id } },
+      relations: ["type", "image", "user"]
     });
     return found;
   }
@@ -143,12 +144,6 @@ export class ReportsService {
     return result;
   }
 
-  async findAllByAuthor(author: User) {
-    return this.reportsRepository.find({
-      where: { user: { user_id: author.user_id } },
-      relations: ['type']
-    });
-  }
 
   async closeReport(report_id: string) {
     return await this.update(report_id, { state: REPORT_STATES.CLOSED }, new Date());
@@ -201,7 +196,7 @@ export class ReportsService {
   async findOne(id: string, user: User) {
     const found = await this.reportsRepository.findOne({
       where: { report_id: id },
-      relations: ['user', 'image']
+      relations: ['user', 'image', 'type']
 
     });
 
