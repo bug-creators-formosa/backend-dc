@@ -9,11 +9,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
+import { Image } from '@/images/entities/image.entity';
 
 @Module({
   imports: [
     ConfigModule,
-    TypeOrmModule.forFeature([User, Role, Report, ReportType]),
+    TypeOrmModule.forFeature([User, Role, Report, ReportType, Image]),
     ReportsModule,
   ],
   providers: [UsersService, ReportsService],
