@@ -7,6 +7,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { getConnectionOptions } from '../config';
 import { SeederService } from './seeder.service';
+import { Report } from '@/reports/entities/report.entity';
+import { Image } from '@/images/entities/image.entity';
 
 @Module({
   imports: [
@@ -23,7 +25,7 @@ import { SeederService } from './seeder.service';
         }
         return {
           ...getConnectionOptions(dbConfig),
-          entities: [Role, User, ReportType]
+          entities: [Role, User, ReportType, Report, Image]
         };
       },
       inject: [ConfigService],
