@@ -2,7 +2,7 @@ export const REPORT_STATES = {
     /** La denuncia está abierta.  */
     OPENED: "opened",
     /** En curso */
-    IN_PROGRESS: "in-progress",
+    IN_PROGRESS: "in progress",
     /** Cerrada, no se realizará */
     CLOSED: "closed",
     /** Cerrada, completada correctamente */
