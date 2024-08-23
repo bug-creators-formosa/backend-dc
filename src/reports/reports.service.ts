@@ -196,7 +196,7 @@ export class ReportsService {
   async findOne(id: string, user: User) {
     const found = await this.reportsRepository.findOne({
       where: { report_id: id },
-      relations: ['user', 'image']
+      relations: ['user', 'image', 'type']
 
     });
 
