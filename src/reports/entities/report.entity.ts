@@ -49,6 +49,11 @@ export class Report {
 
   @Expose({ name: 'image_url' })
   imageUrl() {
+
+    if (!this.image) {
+      return null;
+    }
+
     return '/images/' + this.image?.image_id;
   }
 
