@@ -173,6 +173,7 @@ export class SeederService {
             user,
             created_at: randomReport.created_at,
             state: randomState[countStates],
+            state_change_at: randomReport.created_at
           });
         },
       );
