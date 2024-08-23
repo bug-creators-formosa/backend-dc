@@ -35,11 +35,16 @@ export class Report {
   @ManyToOne(() => ReportType)
   @JoinColumn({
     referencedColumnName: 'report_type_id',
-    name: 'report_type_id'
+    name: 'report_type_id',
   })
   type: ReportType;
+
   @Exclude({ toPlainOnly: true })
   @ManyToOne(() => Image, { nullable: true })
+  @JoinColumn({
+    referencedColumnName: 'image_id',
+    name: 'image_id',
+  })
   image?: Image;
 
   @Expose({ name: 'image_url' })
@@ -55,9 +60,13 @@ export class Report {
   state: ReportState;
 
   @ManyToOne(() => User)
+  @JoinColumn({
+    referencedColumnName: 'user_id',
+    name: 'user_id',
+  })
   user: User;
 
-  @Column({ nullable: true, type: "date", default: "NOW()" })
+  @Column({ nullable: true, type: 'date', default: 'NOW()' })
   state_change_at: Date;
 
   @CreateDateColumn()
