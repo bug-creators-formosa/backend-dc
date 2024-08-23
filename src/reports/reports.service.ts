@@ -130,7 +130,6 @@ export class ReportsService {
       .addSelect('report.state', 'state')
       .groupBy('month_date')
       .addGroupBy('state')
-      .limit(12)
       .orderBy('month_date', 'ASC');
 
     const rawResult = await query.getRawMany();

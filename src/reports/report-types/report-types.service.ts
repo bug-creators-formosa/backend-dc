@@ -131,7 +131,6 @@ export class ReportTypesService {
       .addSelect('report.state', 'state')
       .groupBy('type_name')
       .addGroupBy('state')
-      .limit(5)
       .orderBy('reports', 'DESC');
 
     const result = await query.getRawMany();
