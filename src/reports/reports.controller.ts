@@ -150,7 +150,7 @@ export class ReportsController {
   }
 
   @Role(ROLES.ADMIN)
-  @Patch(':id/close')
+  @Patch(':id/closed')
   async closeReport(
     @Param('id', uuidPipe) report_id: string
   ) {
@@ -166,7 +166,7 @@ export class ReportsController {
   }
 
   @Role(ROLES.ADMIN)
-  @Patch(':id/solve')
+  @Patch(':id/solved')
   async solveReport(
     @Param('id', uuidPipe) report_id: string
   ) {
@@ -174,7 +174,7 @@ export class ReportsController {
   }
 
   @Role(ROLES.ADMIN)
-  @Patch(':id/open')
+  @Patch(':id/opened')
   async openReport(
     @Param('id', uuidPipe) report_id: string
   ) {
