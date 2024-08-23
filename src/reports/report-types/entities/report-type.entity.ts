@@ -6,7 +6,7 @@ export class ReportType {
     @PrimaryGeneratedColumn('uuid')
     report_type_id: string;
 
-    @Column()
+    @Column({ nullable: false, unique: true })
     name: string;
 
     @Column()
