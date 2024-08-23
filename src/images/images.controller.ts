@@ -10,7 +10,7 @@ import { ImagesService } from './images.service';
 import { Response } from 'express';
 import { JwtAuthGuard } from '@/auth/guards/auth.guard';
 
-@UseGuards(JwtAuthGuard)
+// @UseGuards(JwtAuthGuard)
 @Controller('images')
 export class ImagesController {
   constructor(private readonly imagesService: ImagesService) {}
