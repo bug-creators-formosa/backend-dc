@@ -136,7 +136,8 @@ export class UsersService {
       .addSelect('DATE_TRUNC(\'month\', user.created_at)', 'month_date')
       .addSelect('EXTRACT(YEAR FROM DATE_TRUNC(\'month\', user.created_at))', 'year')
       .addSelect('EXTRACT(MONTH FROM DATE_TRUNC(\'month\', user.created_at))', 'month')
-      .groupBy('month_date')
+      .where('user.created_at BETWEEN DATE_TRUNC(\'year\', NOW()) AND NOW()')
+      .groupBy('month_date')      
       .orderBy('month_date', 'ASC');
 
     const result = await query.getRawMany();
