@@ -203,11 +203,11 @@ export class ReportsService {
       throw new NotFoundException('Denuncia no encontrado');
     }
 
-    if (found.user.user_id != user.user_id) {
-      throw new UnauthorizedException(
-        'No estás autorizado a realizar esta acción.',
-      );
-    }
+    // if (found.user.user_id != user.user_id) {
+    //   throw new UnauthorizedException(
+    //     'No estás autorizado a realizar esta acción.',
+    //   );
+    // }
 
     return found;
   }

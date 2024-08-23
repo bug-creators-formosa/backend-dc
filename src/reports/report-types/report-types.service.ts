@@ -45,7 +45,9 @@ export class ReportTypesService {
   }
 
   async findAll() {
-    return await this.reportTypeRepository.find();
+    return await this.reportTypeRepository.find({
+      order: { name: 'ASC' },
+    });
   }
 
   async findOne(id: string) {
